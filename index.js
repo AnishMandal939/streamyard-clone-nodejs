@@ -41,6 +41,11 @@ io.on('connection', socket => {
     socket.on('binaryStream', (data) => {
         console.log('Binary stream received on server:', data);
         // io.emit('binaryStream', data);
+        ffmpegProcess.stdin.write(stream, (err) => {
+            if (err) {
+                console.log('Error writing binary stream to ffmpeg process:', err);
+            }
+        });
     });
 
     // socket.on('message', (data) => {
