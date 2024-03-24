@@ -8,7 +8,7 @@ import { Server as SocketIO } from 'socket.io';
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIO(server); // < Interesting! We are passing the server object to SocketIO
-const youtubeAPIKey = 'dcfx-m7v2-j248-3185-9207';
+const youtubeAPIKey = 'YOUR_YOUTUBE_API_KEY';
 // options to stream video live stream
 const options = [
     '-i',
@@ -34,6 +34,14 @@ const options = [
 // cmd for ffmpeg process
 const ffmpegProcess = spawn('ffmpeg', options);
 
+ffmpegProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+});
+
+ffmpegProcess.on('close', (code) => {
+    console.log(`ffmpeg process exited with code: ${code}`);
+});
+
 app.use(express.static(path.resolve('./public')))
 
 io.on('connection', socket => {
@@ -47,11 +55,6 @@ io.on('connection', socket => {
             }
         });
     });
-
-    // socket.on('message', (data) => {
-    //     console.log('Message received on server:', data);
-    //     io.emit('message', data);
-    // });
 })
 
 server.listen(3000, () => {
